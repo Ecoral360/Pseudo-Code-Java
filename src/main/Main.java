@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import psc.PscLexer;
+
 public class Main {
     public static void main(String[] args) {
         execute();
@@ -23,7 +25,11 @@ public class Main {
             }
             codeScan.close();
 
+            PscLexer lexer = new PscLexer();
 
+            for (String line : codeList){
+                lexer.lex(line).forEach(token -> System.out.println(token.getNom() + "  " + token.getValeur()));
+            }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

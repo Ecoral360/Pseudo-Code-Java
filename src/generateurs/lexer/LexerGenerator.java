@@ -2,6 +2,8 @@ package generateurs.lexer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import generateurs.lexer.regle.Regle;
 import tokens.Token;
@@ -10,16 +12,16 @@ public class LexerGenerator {
     private ArrayList<Regle> reglesAjoutees = new ArrayList<>();
     private ArrayList<Regle> reglesIgnorees = new ArrayList<>();
     
-    LexerGenerator(){
+    public LexerGenerator(){
         
     }
 
 
-    protected void AjouterRegle(String nom, String pattern){
+    protected void ajouterRegle(String nom, String pattern){
         this.reglesAjoutees.add(new Regle(nom, pattern));
     }
 
-    protected void IgnorerRegle(String pattern){
+    protected void ignorerRegle(String pattern){
         this.reglesIgnorees.add(new Regle(pattern));
     }
 
@@ -32,17 +34,43 @@ public class LexerGenerator {
     }
 
 
+    public List<Token> lex(String s){
 
-    public List<Token> lex(String line){
-        
-        
-        
-        return null;
+        List<Token> tokenList = new ArrayList<>();
+
+        int idx = 0;
+
+        while (idx < s.length()){
+            
+            while (true){
+                boolean trouve = false;
+                for (Regle regle : this.getReglesIgnorees()){
+                    Matcher match = Pattern.compile(regle.getPattern()).matcher(s);
+                    if (match.find(idx) && match.start() == idx){
+                        idx = match.end();
+                        trouve = true;
+                        break;
+                    }
+                }
+                if (! trouve){
+                    break;
+                }
+            }
+            boolean trouve = false;
+            for (Regle regle : this.getReglesAjoutees()){
+                Matcher match = Pattern.compile(regle.getPattern()).matcher(s);
+                    if (match.find(idx) && match.start() == idx){
+                        tokenList.add(new Token(regle.getNom(), s.substring(match.start(), match.end())));
+                        idx = match.end();
+                        trouve = true;
+                        break;
+                    }
+            }
+            if (! trouve){
+                throw new Error("Lexing Error");
+            }
+        }
+
+        return tokenList;
     }
-
-    private Token getNext(){
-        
-        return null;
-    }
-
 }

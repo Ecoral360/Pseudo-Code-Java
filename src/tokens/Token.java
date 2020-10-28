@@ -4,7 +4,7 @@ public class Token {
     
     private String nom, valeur;
 
-    Token(String nom, String valeur){
+    public Token(String nom, String valeur){
         this.nom = nom; 
         this.valeur = valeur;
     }

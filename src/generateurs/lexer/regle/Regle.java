@@ -2,7 +2,7 @@ package generateurs.lexer.regle;
 
 public class Regle {
     
-    public String nom, pattern;
+    private String nom, pattern;
 
     public Regle(String nom, String pattern){
         this.nom = nom;
@@ -11,6 +11,14 @@ public class Regle {
 
     public Regle(String pattern){
         this.pattern = pattern;
+    }
+
+    public String getNom(){
+        return this.nom;
+    }
+
+    public String getPattern(){
+        return this.pattern;
     }
 
 
