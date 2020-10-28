@@ -1,5 +1,5 @@
 package generateurs.parser;
 
-public class ParserGenerateur {
+public class ParserGenerator {
     
 }
