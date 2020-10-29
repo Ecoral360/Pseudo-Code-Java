@@ -76,25 +76,36 @@ public class ParserGenerator {
 
         ArrayList<ArrayList<Token>> expressionsList = new ArrayList<>(); 
 
-        String clef = iterProgramme.hasNext() ? iterProgramme.next() : "";
+        String clef = iterProgramme.hasNext() ? iterProgramme.next() : null;
 
         ArrayList<Token> expressionList = new ArrayList<>(); 
 
         for (int i = 0; i < structureLine.size(); ++i){
-            if (clef.equals(structureLine.get(i))){
-                clef = iterProgramme.hasNext() ? iterProgramme.next() : "";
+            if (structureLine.get(i).equals(clef)){
+                clef = iterProgramme.hasNext() ? iterProgramme.next() : null;
                 expressionsList.add(expressionList);
                 expressionList = new ArrayList<>();
             } else {
                 expressionList.add(listToken.get(i));
             }
         }
+        expressionsList.add(expressionList);
+        expressionsList.removeIf(l -> l.isEmpty());
+
         return expressionsList;
     }
 
 
-    public void resoudreExpressions(){
+    public void resoudreExpressions(ArrayList<Object> expressionsList){
+        ArrayList<Object> solvedExpression = new ArrayList<>(expressionsList);
+        solvedExpression.replaceAll(e -> e instanceof Token ? ((Token) e).getNom() : "expression");
+        
+        for (String expression : this.expressions.keySet()){
+            ArrayList<String> structureExpression = new ArrayList<>(Arrays.asList(expression.split(" ")));
 
+            
+
+        }
     }
 
 }
