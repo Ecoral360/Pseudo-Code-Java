@@ -3,9 +3,12 @@ package main;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import psc.PscLexer;
+import psc.PscParser;
+import tokens.Token;
 
 public class Main {
     public static void main(String[] args) {
@@ -26,9 +29,11 @@ public class Main {
             codeScan.close();
 
             PscLexer lexer = new PscLexer();
+            PscParser parser = new PscParser();
 
             for (String line : codeList){
-                lexer.lex(line).forEach(token -> System.out.println(token.getNom() + "  " + token.getValeur()));
+                List<Token> tokens = lexer.lex(line);
+                parser.parse(tokens);
             }
 
         } catch (FileNotFoundException e) {
