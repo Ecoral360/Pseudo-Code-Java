@@ -96,16 +96,18 @@ public class ParserGenerator {
     }
 
 
-    public void resoudreExpressions(ArrayList<Object> expressionsList){
-        ArrayList<Object> solvedExpression = new ArrayList<>(expressionsList);
+    public ArrayList<Object> resoudreExpressions(ArrayList<Object> expressionsList){
+        ArrayList<Object> solvedExpression = new ArrayList<>();
         solvedExpression.replaceAll(e -> e instanceof Token ? ((Token) e).getNom() : "expression");
         
         for (String expression : this.expressions.keySet()){
             ArrayList<String> structureExpression = new ArrayList<>(Arrays.asList(expression.split(" ")));
-
             
 
+
         }
+
+        return expressionsList;
     }
 
 }

@@ -2,7 +2,6 @@ package ast;
 
 import java.util.List;
 
-public interface Ast {
-    
-    public Object run(List<Object> p);
+public interface Ast<T> {
+    public T run(List<Object> p);
 }
