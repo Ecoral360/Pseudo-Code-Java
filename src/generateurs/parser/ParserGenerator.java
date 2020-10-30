@@ -10,29 +10,29 @@ import ast.Ast;
 import tokens.Token;
 
 public class ParserGenerator {
-    Hashtable<String, Ast> programmes = new Hashtable<>();
-    Hashtable<String, Ast> expressions = new Hashtable<>();
+    Hashtable<String, Ast<?>> programmes = new Hashtable<>();
+    Hashtable<String, Ast<?>> expressions = new Hashtable<>();
 
 
     public ParserGenerator(){
 
     }
-
-    protected void ajouterProgramme(String nom, Ast fonction){
+ 
+    protected void ajouterProgramme(String nom, Ast<?> fonction) {
         this.programmes.put(nom, fonction);
     }
 
-    protected void ajouterExpression(String nom, Ast fonction){
+    protected void ajouterExpression(String nom, Ast<?> fonction) {
         this.expressions.put(nom, fonction);
     }
 
 
-    public boolean containsAllInRelativePosition(ArrayList<?> container, ArrayList<?> content){
+    public boolean containsAllInRelativePosition(ArrayList<?> container, ArrayList<?> content) {
         ArrayList<?> containerCopy = new ArrayList<>(container);
-        if (containerCopy.isEmpty() && content.isEmpty()){
+        if (containerCopy.isEmpty() && content.isEmpty()) {
             return true;
         }
-        if ((containerCopy.retainAll(content) || containerCopy.equals(content)) && ! (containerCopy.isEmpty() || content.isEmpty())){
+        if ((containerCopy.retainAll(content) || containerCopy.equals(content)) && ! (containerCopy.isEmpty() || content.isEmpty())) {
             return containerCopy.equals(content);
         }
         return false;
@@ -47,7 +47,7 @@ public class ParserGenerator {
     }
 
 
-    public String getProgramme(List<Token> listToken){
+    public String getProgramme(List<Token> listToken) {
         String programmeTrouve = null;
         ArrayList<String> structureLine = new ArrayList<>();
         listToken.forEach(e -> structureLine.add(e.getNom()));
@@ -56,7 +56,7 @@ public class ParserGenerator {
             ArrayList<String> structureProgramme = new ArrayList<>(Arrays.asList(programme.split(" ")));
             structureProgramme.removeIf(e -> e.equals("expression"));
             
-            if (containsAllInRelativePosition(structureLine, structureProgramme)){
+            if (containsAllInRelativePosition(structureLine, structureProgramme)) {
                 programmeTrouve = programme;
                 break;
             }
@@ -65,7 +65,7 @@ public class ParserGenerator {
     }
 
 
-    public ArrayList<ArrayList<Token>> getExpressions(List<Token> listToken, String programme){
+    public ArrayList<ArrayList<Token>> getExpressions(List<Token> listToken, String programme) {
         ArrayList<String> structureLine = new ArrayList<>();
         listToken.forEach(e -> structureLine.add(e.getNom()));
 
@@ -80,8 +80,8 @@ public class ParserGenerator {
 
         ArrayList<Token> expressionList = new ArrayList<>(); 
 
-        for (int i = 0; i < structureLine.size(); ++i){
-            if (structureLine.get(i).equals(clef)){
+        for (int i = 0; i < structureLine.size(); ++i) {
+            if (structureLine.get(i).equals(clef)) {
                 clef = iterProgramme.hasNext() ? iterProgramme.next() : null;
                 expressionsList.add(expressionList);
                 expressionList = new ArrayList<>();
@@ -96,12 +96,13 @@ public class ParserGenerator {
     }
 
 
-    public ArrayList<Object> resoudreExpressions(ArrayList<Object> expressionsList){
+    public ArrayList<Object> resoudreExpressions(ArrayList<Object> expressionsList) {
         ArrayList<Object> solvedExpression = new ArrayList<>();
         solvedExpression.replaceAll(e -> e instanceof Token ? ((Token) e).getNom() : "expression");
         
         for (String expression : this.expressions.keySet()){
             ArrayList<String> structureExpression = new ArrayList<>(Arrays.asList(expression.split(" ")));
+            
             
 
 

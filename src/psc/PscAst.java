@@ -5,6 +5,7 @@ import tokens.Token;
 public interface PscAst<T> {
     
 
+
     class Entier implements PscAst<Integer>{
         private int valeur;
         
