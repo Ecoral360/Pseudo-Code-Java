@@ -4,14 +4,33 @@
 
 /*
     Explications:
-    1. tout ce qui se retrouve sous la section ~Grammaire est considéré comme une syntaxe à ajouter
-    2. tout ce qui se retrouve sous la section ~Grammaire est considéré comme une syntaxe à ignorer
-    3. pour ajouter syntaxe:
-        3.1 Nom de la 
+    1. tout ce qui se retrouve sous la section ~Ajouter est considéré comme une syntaxe à ajouter
+    2. tout ce qui se retrouve sous la section ~Ignorer est considéré comme une syntaxe à ignorer
+    3. Syntaxe à ajouter:
+        ex: PLUS -> "\+"
+
+        3.1 Nom de la regle à ajouter (ex: PLUS)
+        3.2 Symbole '->'
+        3.3 regular expression pour détecter la règle (ex: "\+" )
+    
+    4. Syntaxe à ignorer:
+        ex: "\s+"
+        4.1 regular expression pour détecter la règle (ex: "\s+" )
+    
+    5. Que ce soit pour une règle à ajouter ou à ignorer, chaque regle doit être séparé par un retour à la ligne
+
+    6. les regles qui se retrouve sous la section ~Structure indique comment repérer la fin d'un bout de code:
+        6.1 FIN_LIGNE indique la fin d'une ligne
+        6.2 DEBUT_BLOC indique le début d'un bloc de code
+        6.3 FIN_BLOC indique la fin d'un bloc de code
 */
 
-~Grammaire:
+
+~Ajouter
 
 
-~Ignorer:
+~Ignorer
+
+
+~Fin
 
