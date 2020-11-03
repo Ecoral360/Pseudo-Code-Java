@@ -11,19 +11,39 @@ import tokens.Token;
 
 public class ParserGenerator {
     Hashtable<String, Ast<?>> programmes = new Hashtable<>();
-    Hashtable<String, Ast<?>> expressions = new Hashtable<>();
+    ArrayList<String> ordreProgrammes = new ArrayList<>();
 
+    Hashtable<String, Ast<?>> expressions = new Hashtable<>();
+    ArrayList<String> ordreExpressions = new ArrayList<>();
 
     public ParserGenerator(){
 
     }
  
-    protected void ajouterProgramme(String nom, Ast<?> fonction) {
+    protected void ajouterProgramme(String nom, Integer importance, Ast<?> fonction) { 
+        /*
+            importance : 0 = plus important
+            si plusieurs programmes ont la même importance, le dernier ajouté sera priorisé
+        */
         this.programmes.put(nom, fonction);
+        if (importance == null){
+            this.ordreProgrammes.add(nom);
+        } else {
+            this.ordreProgrammes.add(importance, nom);
+        }
     }
 
-    protected void ajouterExpression(String nom, Ast<?> fonction) {
+    protected void ajouterExpression(String nom, Integer importance, Ast<?> fonction) {  
+        /*
+            importance : 0 = plus important
+            si plusieurs expressions ont la même importance, la dernière ajoutée sera priorisée
+        */
         this.expressions.put(nom, fonction);
+        if (importance == null){
+            this.ordreExpressions.add(nom);
+        } else {
+            this.ordreExpressions.add(importance, nom);
+        }
     }
 
 
@@ -39,11 +59,23 @@ public class ParserGenerator {
     }
 
 
-    public void parse(List<Token> listToken){
+    public Object parse(List<Token> listToken){
+        System.out.println("\n");
+
         String programme = getProgramme(listToken);
-        System.out.println(programme);
+        System.out.println("Programme trouvé: " + programme);
+
         ArrayList<ArrayList<Token>> expressions = getExpressions(listToken, programme);
-        System.out.println(expressions);
+        System.out.println("Expression trouvée: " + expressions);
+
+        List<Object> expressionsResolues = new ArrayList<>();
+
+        for (ArrayList<Token> expression : expressions){
+            Object resolu = resoudreExpressions(expression).get(0);
+            expressionsResolues.add(resolu);
+            System.out.println("Expressions résolues: " + resolu);
+        }
+        return this.programmes.get(programme).run(expressionsResolues);
     }
 
 
@@ -52,7 +84,7 @@ public class ParserGenerator {
         ArrayList<String> structureLine = new ArrayList<>();
         listToken.forEach(e -> structureLine.add(e.getNom()));
         
-        for (String programme : this.programmes.keySet()){
+        for (String programme : this.ordreProgrammes){
             ArrayList<String> structureProgramme = new ArrayList<>(Arrays.asList(programme.split(" ")));
             structureProgramme.removeIf(e -> e.equals("expression"));
             
@@ -96,19 +128,32 @@ public class ParserGenerator {
     }
 
 
-    public ArrayList<Object> resoudreExpressions(ArrayList<Object> expressionsList) {
-        ArrayList<Object> solvedExpression = new ArrayList<>();
-        solvedExpression.replaceAll(e -> e instanceof Token ? ((Token) e).getNom() : "expression");
+    public ArrayList<Object> resoudreExpressions(ArrayList<Token> expressionsList) {
         
-        for (String expression : this.expressions.keySet()){
+        ArrayList<Object> expressionArray = new ArrayList<>(expressionsList);
+        List<String> expressionNom = new ArrayList<>();
+        expressionArray.forEach(e -> expressionNom.add(e instanceof Token ? ((Token) e).getNom() : "expression"));
+        
+        for (String expression : this.ordreExpressions){
             ArrayList<String> structureExpression = new ArrayList<>(Arrays.asList(expression.split(" ")));
-            
-            
 
+            int longueurExpression = structureExpression.size();
 
+            if (expressionArray.size() >= longueurExpression){
+                
+                for (int i = 0; i + longueurExpression <= expressionArray.size(); i += longueurExpression){
+                    if (expressionNom.subList(i, longueurExpression).equals(structureExpression)){
+                        Object resolu = this.expressions.get(expression).run(expressionArray.subList(i, longueurExpression));
+                        expressionArray = new ArrayList<>();
+                        expressionArray.addAll(i != 0 ? expressionArray.subList(0, i) : new ArrayList<>());
+                        expressionArray.add(resolu);
+                        expressionArray.addAll(expressionArray.subList(i+longueurExpression, expressionArray.size()));
+                        
+                        System.out.println(expressionArray);
+                    }
+                }
+            }
         }
-
-        return expressionsList;
+        return expressionArray;
     }
-
 }

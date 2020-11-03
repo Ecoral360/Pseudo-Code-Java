@@ -1,3 +1,5 @@
-i <- 0
+afficher 3 + 2
 
-i <- "salut"
+afficher 10 + 20
+
+afficher 11

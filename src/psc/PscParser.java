@@ -5,6 +5,7 @@ import java.util.List;
 import ast.Ast;
 import generateurs.parser.ParserGenerator;
 import psc.PscAst.*;
+import tokens.Token;
 
 
 public class PscParser extends ParserGenerator{
@@ -16,16 +17,17 @@ public class PscParser extends ParserGenerator{
 
     private void ajouterProgrammes(){
 
-        ajouterProgramme("expression", new Ast<Object>(){
+        ajouterProgramme("expression", null, new Ast<Object>(){
             @Override
             public Object run(List<Object> p) {
                 return null;
             }
         });
 
-        ajouterProgramme("AFFICHER expression", new Ast<Object>(){
+        ajouterProgramme("AFFICHER expression", null, new Ast<Object>(){
             @Override
             public Object run(List<Object> p) {
+                System.out.println(((PscAst<?>) p.get(0)).eval());
                 return null;
             }
         });
@@ -33,14 +35,14 @@ public class PscParser extends ParserGenerator{
 
     private void ajouterExpressions(){
 
-        ajouterExpression("ENTIER", new Ast<Entier>(){
+        ajouterExpression("ENTIER", null, new Ast<Entier>(){
             @Override
             public Entier run(List<Object> p) {
-                return null;
+                return new Entier((Token) p.get(0));
             }
         });
 
-        ajouterExpression("expression PLUS expression", new Ast<Object>(){
+        ajouterExpression("expression PLUS expression", null, new Ast<Object>(){
             @Override
             public Object run(List<Object> p) {
                 return new BinaryOp(p.get(0), p.get(2)).som();
