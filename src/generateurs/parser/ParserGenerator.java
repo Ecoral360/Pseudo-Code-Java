@@ -20,31 +20,54 @@ public class ParserGenerator {
 
     }
  
-    protected void ajouterProgramme(String nom, Integer importance, Ast<?> fonction) { 
+    protected void ajouterProgramme(String nom, Ast<?> fonction) { 
         /*
             importance : 0 = plus important
             si plusieurs programmes ont la même importance, le dernier ajouté sera priorisé
         */
         this.programmes.put(nom, fonction);
-        if (importance == null){
-            this.ordreProgrammes.add(nom);
-        } else {
-            this.ordreProgrammes.add(importance, nom);
-        }
+
     }
 
-    protected void ajouterExpression(String nom, Integer importance, Ast<?> fonction) {  
+    protected void ajouterExpression(String nom, Ast<?> fonction) {  
         /*
             importance : 0 = plus important
             si plusieurs expressions ont la même importance, la dernière ajoutée sera priorisée
         */
         this.expressions.put(nom, fonction);
-        if (importance == null){
-            this.ordreExpressions.add(nom);
-        } else {
-            this.ordreExpressions.add(importance, nom);
-        }
     }
+
+    protected void setOrdreProgramme(){
+        for (int i = 0; i < this.programmes.size(); ++i){
+            this.ordreProgrammes.add("");
+        }
+        for (String nom : this.programmes.keySet()){
+            int importance = this.programmes.get(nom).getImportance();
+            if (importance == -1){
+                this.ordreProgrammes.add(nom);
+            } else {
+                this.ordreProgrammes.add(importance, nom);
+            }
+        }
+        this.ordreProgrammes.removeIf(e -> e.isBlank());
+    }
+
+    protected void setOrdreExpression(){
+        for (int i = 0; i < this.expressions.size(); ++i){
+            this.ordreExpressions.add("");
+        }
+        for (String nom : this.expressions.keySet()){
+            int importance = this.expressions.get(nom).getImportance();
+            if (importance == -1){
+                this.ordreExpressions.add(nom);
+            } else {
+                this.ordreExpressions.add(importance, nom);
+            }
+        }
+        this.ordreExpressions.removeIf(e -> e.isBlank());
+        
+    }
+
 
 
     public boolean containsAllInRelativePosition(ArrayList<?> container, ArrayList<?> content) {
@@ -60,20 +83,25 @@ public class ParserGenerator {
 
 
     public Object parse(List<Token> listToken){
-        System.out.println("\n");
+        //System.out.println("\n");
 
         String programme = getProgramme(listToken);
-        System.out.println("Programme trouvé: " + programme);
+        //System.out.println("Programme trouvé: " + programme);
 
         ArrayList<ArrayList<Token>> expressions = getExpressions(listToken, programme);
-        System.out.println("Expression trouvée: " + expressions);
+        //System.out.println("Expression trouvée: " + expressions);
 
         List<Object> expressionsResolues = new ArrayList<>();
 
         for (ArrayList<Token> expression : expressions){
-            Object resolu = resoudreExpressions(expression).get(0);
-            expressionsResolues.add(resolu);
-            System.out.println("Expressions résolues: " + resolu);
+            ArrayList<Object> resolu = resoudreExpressions(expression);
+            if (resolu.size() > 1){
+                throw new Error("Expression invalide: " + resolu);
+            } else{
+                expressionsResolues.add(resolu.get(0));
+            }
+            
+            //System.out.println("Expressions résolues: " + resolu.get(0));
         }
         return this.programmes.get(programme).run(expressionsResolues);
     }
@@ -131,29 +159,38 @@ public class ParserGenerator {
     public ArrayList<Object> resoudreExpressions(ArrayList<Token> expressionsList) {
         
         ArrayList<Object> expressionArray = new ArrayList<>(expressionsList);
-        List<String> expressionNom = new ArrayList<>();
-        expressionArray.forEach(e -> expressionNom.add(e instanceof Token ? ((Token) e).getNom() : "expression"));
+        
+        //System.out.println(this.ordreExpressions);
         
         for (String expression : this.ordreExpressions){
+
+            List<String> expressionNom = new ArrayList<>();
+            expressionArray.forEach(e -> expressionNom.add(e instanceof Token ? ((Token) e).getNom() : "expression"));
+            //System.out.println("Nom " + expressionNom);
+
             ArrayList<String> structureExpression = new ArrayList<>(Arrays.asList(expression.split(" ")));
 
             int longueurExpression = structureExpression.size();
 
             if (expressionArray.size() >= longueurExpression){
                 
-                for (int i = 0; i + longueurExpression <= expressionArray.size(); i += longueurExpression){
-                    if (expressionNom.subList(i, longueurExpression).equals(structureExpression)){
-                        Object resolu = this.expressions.get(expression).run(expressionArray.subList(i, longueurExpression));
-                        expressionArray = new ArrayList<>();
-                        expressionArray.addAll(i != 0 ? expressionArray.subList(0, i) : new ArrayList<>());
-                        expressionArray.add(resolu);
-                        expressionArray.addAll(expressionArray.subList(i+longueurExpression, expressionArray.size()));
+                for (int i = 0; i + longueurExpression <= expressionArray.size(); ++i){
+                    if (expressionNom.subList(i, i+longueurExpression).equals(structureExpression)){
+                        Object resolu = this.expressions.get(expression).run(expressionArray.subList(i, i+longueurExpression));
                         
-                        System.out.println(expressionArray);
+                        ArrayList<Object> newArray = new ArrayList<>();
+                        newArray.addAll(i != 0 ? expressionArray.subList(0, i) : new ArrayList<>());
+                        newArray.add(resolu);
+                        newArray.addAll(expressionArray.subList(i+longueurExpression, expressionArray.size()));
+
+                        expressionArray = newArray;
+
+                        //System.out.println(expressionArray);
                     }
                 }
             }
         }
+    
         return expressionArray;
     }
 }

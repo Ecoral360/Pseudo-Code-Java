@@ -1,5 +1,7 @@
 package psc;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ast.Ast;
@@ -17,36 +19,94 @@ public class PscParser extends ParserGenerator{
 
     private void ajouterProgrammes(){
 
-        ajouterProgramme("expression", null, new Ast<Object>(){
+        ajouterProgramme("expression", new Ast<Object>(){
             @Override
             public Object run(List<Object> p) {
                 return null;
             }
         });
 
-        ajouterProgramme("AFFICHER expression", null, new Ast<Object>(){
+        ajouterProgramme("AFFICHER expression", new Ast<Object>(){
             @Override
             public Object run(List<Object> p) {
                 System.out.println(((PscAst<?>) p.get(0)).eval());
                 return null;
             }
         });
+
+        setOrdreProgramme();
     }
 
+
+    
     private void ajouterExpressions(){
 
-        ajouterExpression("ENTIER", null, new Ast<Entier>(){
+        ajouterExpression("ENTIER POINT ENTIER", new Ast<Reel>(0) {
+            @Override
+            public Reel run(List<Object> p) {
+                return new Reel((Token) p.get(0), (Token) p.get(2));
+            }
+        });
+
+        ajouterExpression("ENTIER", new Ast<Entier>(1){
             @Override
             public Entier run(List<Object> p) {
                 return new Entier((Token) p.get(0));
             }
         });
 
-        ajouterExpression("expression PLUS expression", null, new Ast<Object>(){
+        ajouterExpression("PARENT_OUV expression PARENT_FERM", new Ast<Object>(2){
+            @Override
+            public Object run(List<Object> p) {
+                return p.get(1);
+            }
+        });
+
+
+        ajouterExpression("expression MOD expression", new Ast<Object>(3){
+            @Override
+            public Object run(List<Object> p) {
+                return new BinaryOp(p.get(0), p.get(2)).mod();
+            }
+        });
+
+        ajouterExpression("expression EXP expression", new Ast<Object>(4){
+            @Override
+            public Object run(List<Object> p) {
+                return new BinaryOp(p.get(0), p.get(2)).exp();
+            }
+        });
+
+        ajouterExpression("expression MUL expression", new Ast<Object>(5){
+            @Override
+            public Object run(List<Object> p) {
+                return new BinaryOp(p.get(0), p.get(2)).mul();
+            }
+        });
+
+        ajouterExpression("expression DIV expression", new Ast<Object>(5){
+            @Override
+            public Object run(List<Object> p) {
+                return new BinaryOp(p.get(0), p.get(2)).div();
+            }
+        });
+
+        ajouterExpression("expression PLUS expression", new Ast<Object>(6){
             @Override
             public Object run(List<Object> p) {
                 return new BinaryOp(p.get(0), p.get(2)).som();
             }
         });
+
+        ajouterExpression("expression MOINS expression",  new Ast<Object>(6){
+            @Override
+            public Object run(List<Object> p) {
+                return new BinaryOp(p.get(0), p.get(2)).sou();
+            }
+        });
+
+        
+
+        setOrdreExpression();
     }
 }
