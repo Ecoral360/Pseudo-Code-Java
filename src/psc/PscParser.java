@@ -1,7 +1,5 @@
 package psc;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import ast.Ast;
@@ -38,7 +36,7 @@ public class PscParser extends ParserGenerator{
     }
 
 
-    
+
     private void ajouterExpressions(){
 
         ajouterExpression("ENTIER POINT ENTIER", new Ast<Reel>(0) {
@@ -52,6 +50,14 @@ public class PscParser extends ParserGenerator{
             @Override
             public Entier run(List<Object> p) {
                 return new Entier((Token) p.get(0));
+            }
+        });
+
+
+        ajouterExpression("CHAINE", new Ast<Chaine>(1){
+            @Override
+            public Chaine run(List<Object> p) {
+                return new Chaine((Token) p.get(0));
             }
         });
 

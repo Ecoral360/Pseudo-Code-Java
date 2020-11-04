@@ -24,6 +24,23 @@ public interface PscAst<T> {
 
     }
 
+    class Chaine implements PscAst<String>{
+        private String valeur;
+        
+        Chaine(Token valeur){
+            this.valeur = valeur.getValeur().replaceAll("\"", "");
+        }
+
+        Chaine(Number valeur){
+            this.valeur = String.valueOf(valeur.intValue());
+        }
+
+        @Override
+        public String eval() {
+            return valeur;
+        }
+    }
+
     class Reel implements PscAst<Double>{
         private double valeur;
         
@@ -80,11 +97,7 @@ public interface PscAst<T> {
 		}
 
 		public Object mod() {
-			if (this.gauche instanceof Entier && this.droite instanceof Entier){
-                return new Entier(((Entier) this.gauche).eval() % ((Entier) this.droite).eval());
-            } else{
-                return new Reel(((Number) this.gauche.eval()).doubleValue() * ((Number) this.droite.eval()).doubleValue());
-            }
+		    return new Entier(((Entier) this.gauche).eval() % ((Entier) this.droite).eval());
 		}
 
 		public Object exp() {

@@ -46,10 +46,16 @@ public class ParserGenerator {
             if (importance == -1){
                 this.ordreProgrammes.add(nom);
             } else {
-                this.ordreProgrammes.add(importance, nom);
+                if (this.ordreProgrammes.get(importance).isEmpty()){
+                    this.ordreProgrammes.set(importance, nom);
+                } else {
+                    this.ordreProgrammes.add(importance, nom);
+                }
+                
             }
         }
         this.ordreProgrammes.removeIf(e -> e.isBlank());
+        System.out.println(this.ordreProgrammes);
     }
 
     protected void setOrdreExpression(){
@@ -61,11 +67,16 @@ public class ParserGenerator {
             if (importance == -1){
                 this.ordreExpressions.add(nom);
             } else {
-                this.ordreExpressions.add(importance, nom);
+                if (this.ordreExpressions.get(importance).isEmpty()){
+                    this.ordreExpressions.set(importance, nom);
+                } else {
+                    this.ordreExpressions.add(importance, nom);
+                }
+                
             }
         }
         this.ordreExpressions.removeIf(e -> e.isBlank());
-        
+        System.out.println(this.ordreExpressions);
     }
 
 

@@ -24,6 +24,7 @@ public class PscLexer extends LexerGenerator{
 
         ajouterRegle("POINT", "\\.");
 
+        ajouterRegle("CHAINE", "\".*?\"");
 
         // règles à ignorer
         ignorerRegle("\\s+");

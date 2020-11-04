@@ -1,5 +1,5 @@
 afficher 3 + 2 * 4
 
 afficher 1.9
-
-afficher 11 - 7
+afficher "oo"
+afficher 11 mod 3
