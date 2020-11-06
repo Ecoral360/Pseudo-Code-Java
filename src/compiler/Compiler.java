@@ -38,10 +38,11 @@ public class Compiler {
 
     String coord = "0M";
 
+    Compiler(ArrayList<String> codeList){
+    }
+
     Compiler(ArrayList<String> codeList, String start){
         this.coord = start;
-        
-
     }
 
     public String prochaineCoord(String coord){
