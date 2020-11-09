@@ -31,6 +31,10 @@ public interface PscAst<T> {
             this.valeur = valeur.getValeur().replaceAll("\"", "");
         }
 
+        Chaine(Object valeur){
+            this.valeur = String.valueOf(valeur);
+        }
+
         Chaine(Number valeur){
             this.valeur = String.valueOf(valeur.intValue());
         }
@@ -68,28 +72,27 @@ public interface PscAst<T> {
             this.droite = (PscAst<?>) droite;
         }
 
+        public Object concat(){
+            return new Chaine(String.valueOf(this.gauche.eval()) + String.valueOf(this.droite.eval()));
+        }
+
         public Object som(){
-            if (this.gauche instanceof Entier && this.droite instanceof Entier){
-                return new Entier(((Entier) this.gauche).eval() + ((Entier) this.droite).eval());
-            } else{
-                return new Reel(((Number) this.gauche.eval()).doubleValue() + ((Number) this.droite.eval()).doubleValue());
-            }
+            return (this.gauche instanceof Entier && this.droite instanceof Entier) ?
+                    new Entier(((Entier) this.gauche).eval() + ((Entier) this.droite).eval()) :
+                    new Reel(((Number) this.gauche.eval()).doubleValue() + ((Number) this.droite.eval()).doubleValue());
+            
         }
 
         public Object sou(){
-            if (this.gauche instanceof Entier && this.droite instanceof Entier){
-                return new Entier(((Entier) this.gauche).eval() - ((Entier) this.droite).eval());
-            } else{
-                return new Reel(((Number) this.gauche.eval()).doubleValue() - ((Number) this.droite.eval()).doubleValue());
-            }
+            return (this.gauche instanceof Entier && this.droite instanceof Entier) ?
+                    new Entier(((Entier) this.gauche).eval() - ((Entier) this.droite).eval()) :
+                    new Reel(((Number) this.gauche.eval()).doubleValue() - ((Number) this.droite.eval()).doubleValue());
         }
 
 		public Object mul() {
-			if (this.gauche instanceof Entier && this.droite instanceof Entier){
-                return new Entier(((Entier) this.gauche).eval() * ((Entier) this.droite).eval());
-            } else{
-                return new Reel(((Number) this.gauche.eval()).doubleValue() * ((Number) this.droite.eval()).doubleValue());
-            }
+			return (this.gauche instanceof Entier && this.droite instanceof Entier) ?
+                    new Entier(((Entier) this.gauche).eval() * ((Entier) this.droite).eval()) :
+                    new Reel(((Number) this.gauche.eval()).doubleValue() * ((Number) this.droite.eval()).doubleValue());
 		}
 
 		public Object div() {
@@ -101,11 +104,9 @@ public interface PscAst<T> {
 		}
 
 		public Object exp() {
-			if (this.gauche instanceof Entier && this.droite instanceof Entier){
-                return new Entier(Math.pow(((Entier) this.gauche).eval(), ((Entier) this.droite).eval()));
-            } else{
-                return new Reel(Math.pow(((Number) this.gauche.eval()).doubleValue(), ((Number) this.droite.eval()).doubleValue()));
-            }
+			return (this.gauche instanceof Entier && this.droite instanceof Entier) ?
+                    new Entier(Math.pow(((Entier) this.gauche).eval(), ((Entier) this.droite).eval())):
+                    new Reel(Math.pow(((Number) this.gauche.eval()).doubleValue(), ((Number) this.droite.eval()).doubleValue()));
 		}
     }
 

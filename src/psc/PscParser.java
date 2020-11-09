@@ -100,7 +100,9 @@ public class PscParser extends ParserGenerator{
         ajouterExpression("expression PLUS expression", new Ast<Object>(6){
             @Override
             public Object run(List<Object> p) {
-                return new BinaryOp(p.get(0), p.get(2)).som();
+                return (p.get(0) instanceof Chaine || p.get(2) instanceof Chaine) ?
+                        new BinaryOp(p.get(0), p.get(2)).concat():
+                        new BinaryOp(p.get(0), p.get(2)).som();
             }
         });
 
