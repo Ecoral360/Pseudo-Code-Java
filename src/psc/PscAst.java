@@ -1,10 +1,26 @@
 package psc;
 
+import java.util.ArrayList;
+
 import tokens.Token;
 
 public interface PscAst<T> {
     
+    class VariableManager {
+        ArrayList<Variable> varDispo = new ArrayList<>();
 
+        VariableManager() {
+
+        }
+
+
+    }
+
+    class Variable {
+        Variable() {
+
+        }
+    }
 
     class Entier implements PscAst<Integer>{
         private int valeur;
@@ -74,6 +90,10 @@ public interface PscAst<T> {
 
         public Object concat(){
             return new Chaine(String.valueOf(this.gauche.eval()) + String.valueOf(this.droite.eval()));
+        }
+
+        public Object repeat(){
+            return new Chaine(String.valueOf(this.gauche.eval()).repeat( (Integer) this.droite.eval() ));
         }
 
         public Object som(){
