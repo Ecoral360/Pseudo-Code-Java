@@ -122,7 +122,7 @@ public class ParserGenerator {
         String programmeTrouve = null;
         ArrayList<String> structureLine = new ArrayList<>();
         listToken.forEach(e -> structureLine.add(e.getNom()));
-        
+
         for (String programme : this.ordreProgrammes){
             ArrayList<String> structureProgramme = new ArrayList<>(Arrays.asList(programme.split(" ")));
             structureProgramme.removeIf(e -> e.equals("expression"));

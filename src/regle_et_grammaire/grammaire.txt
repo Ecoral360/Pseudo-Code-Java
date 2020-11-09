@@ -1,17 +1,15 @@
-/*
-    Tout ce qui ce trouve entre ces deux symboles est un commentaire
-*/
+"""
+    Tout ce qui ce trouve entre ces symboles (""") est un commentaire
 
-/*
     Explications:
-    1. tout ce qui se retrouve sous la section ~Ajouter est considéré comme une syntaxe à ajouter
-    2. tout ce qui se retrouve sous la section ~Ignorer est considéré comme une syntaxe à ignorer
+    1. tout ce qui se retrouve sous la section [Ajouter] est considéré comme une syntaxe à ajouter
+    2. tout ce qui se retrouve sous la section [Ignorer] est considéré comme une syntaxe à ignorer
     3. Syntaxe à ajouter:
         ex: PLUS -> "\+"
 
-        3.1 Nom de la regle à ajouter (ex: PLUS)
+        3.1 Nom de la regle à ajouter (ex: PLUS) (Ne pas mettre d'espace, mettre _ )
         3.2 Symbole '->'
-        3.3 regular expression pour détecter la règle (ex: "\+" )
+        3.3 regular expression pour détecter la règle (ex: "\+" ) (note: si la regular expression commence par un espace, mettre [ ])
     
     4. Syntaxe à ignorer:
         ex: "\s+"
@@ -19,18 +17,31 @@
     
     5. Que ce soit pour une règle à ajouter ou à ignorer, chaque regle doit être séparé par un retour à la ligne
 
-    6. les regles qui se retrouve sous la section ~Structure indique comment repérer la fin d'un bout de code:
+    6. les regles qui se retrouve sous la section [Structure] indique comment repérer la fin d'un bout de code:
         6.1 FIN_LIGNE indique la fin d'une ligne
         6.2 DEBUT_BLOC indique le début d'un bloc de code
         6.3 FIN_BLOC indique la fin d'un bloc de code
-*/
+"""
 
 
-~Ajouter
+[Ajouter]
+
+    AFFICHER        ->      afficher
+    ENTIER          ->      \d+
+    PLUS            ->      \+
+    EXP             ->      \*{2}
+    MUL             ->      \*
+    MOINS           ->      \-
+    DIV             ->      \\
+    MOD             ->      mod|[%]
+    PARENT_OUV      ->      [(]
+    PARENT_FERM     ->      [)]
+    POINT           ->      \.
+    CHAINE          ->      ".*?"
 
 
-~Ignorer
+[Ignorer]
 
+\s+
 
-~Fin
 

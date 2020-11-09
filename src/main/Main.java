@@ -28,7 +28,9 @@ public class Main {
             }
             codeScan.close();
 
-            PscLexer lexer = new PscLexer();
+            File configGrammaire = new File("src/regle_et_grammaire/grammaire.txt");
+
+            PscLexer lexer = new PscLexer(configGrammaire);
             PscParser parser = new PscParser();
 
             for (String line : codeList){
