@@ -1,7 +1,6 @@
 package compiler;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 
 
@@ -34,7 +33,6 @@ Système de coordonnées:
 
 
 public class Compiler {
-    private Hashtable<String, String> codeDict = new Hashtable<>();
 
     String coord = "0M";
 
@@ -45,8 +43,16 @@ public class Compiler {
         this.coord = start;
     }
 
-    public String prochaineCoord(String coord){
-        
+    public static String prochaineCoord(String coord){
+        //System.out.println(Compiler.plusUn(coord));
         return null;
+    }
+
+    public static String plusUn(String coord){
+        String reste = coord.split("^\\d+")[1];
+        String premierNum = coord.replace(reste, "");
+        int nextNum = Integer.valueOf(premierNum) + 1;
+
+        return nextNum + reste;
     }
 }

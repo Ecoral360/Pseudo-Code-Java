@@ -55,7 +55,7 @@ public class ParserGenerator {
             }
         }
         this.ordreProgrammes.removeIf(e -> e.isBlank());
-        System.out.println(this.ordreProgrammes);
+        //System.out.println(this.ordreProgrammes);
     }
 
     protected void setOrdreExpression(){
@@ -76,7 +76,7 @@ public class ParserGenerator {
             }
         }
         this.ordreExpressions.removeIf(e -> e.isBlank());
-        System.out.println(this.ordreExpressions);
+        //System.out.println(this.ordreExpressions);
     }
 
 

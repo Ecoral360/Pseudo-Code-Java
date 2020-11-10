@@ -12,8 +12,6 @@ public interface PscAst<T> {
         VariableManager() {
 
         }
-
-
     }
 
     class Variable {
@@ -40,6 +38,25 @@ public interface PscAst<T> {
 
     }
 
+    class Reel implements PscAst<Double>{
+        private double valeur;
+        
+        Reel(Token valeur){
+            this.valeur = Double.parseDouble(valeur.getValeur());
+        }
+
+        Reel(Number valeur){
+            this.valeur = valeur.doubleValue();
+        }
+
+        @Override
+        public Double eval() {
+            return valeur;
+        }
+
+    }
+
+
     class Chaine implements PscAst<String>{
         private String valeur;
         
@@ -61,23 +78,7 @@ public interface PscAst<T> {
         }
     }
 
-    class Reel implements PscAst<Double>{
-        private double valeur;
-        
-        Reel(Token valeur1, Token valeur2){
-            this.valeur = Double.parseDouble(valeur1.getValeur() + "." + valeur2.getValeur());
-        }
-
-        Reel(Number valeur){
-            this.valeur = valeur.doubleValue();
-        }
-
-        @Override
-        public Double eval() {
-            return valeur;
-        }
-
-    }
+    
 
 
     class BinaryOp{
@@ -128,6 +129,15 @@ public interface PscAst<T> {
                     new Entier(Math.pow(((Entier) this.gauche).eval(), ((Entier) this.droite).eval())):
                     new Reel(Math.pow(((Number) this.gauche.eval()).doubleValue(), ((Number) this.droite.eval()).doubleValue()));
 		}
+    }
+
+    class BinaryComp{
+        PscAst<?> gauche, droite;
+
+        BinaryComp(Object gauche, Object droite){
+            this.gauche = (PscAst<?>) gauche;
+            this.droite = (PscAst<?>) droite;
+        }
     }
 
     public T eval();

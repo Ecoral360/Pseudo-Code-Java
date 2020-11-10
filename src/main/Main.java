@@ -9,6 +9,7 @@ import java.util.Scanner;
 import psc.PscLexer;
 import psc.PscParser;
 import tokens.Token;
+import compiler.Compiler;
 
 public class Main {
     public static void main(String[] args) {
@@ -24,7 +25,9 @@ public class Main {
             Scanner codeScan = new Scanner(codeFile);
 
             while (codeScan.hasNextLine()){
-                codeList.add(codeScan.nextLine());
+                String line = codeScan.nextLine();
+                codeList.add(line);
+                Compiler.prochaineCoord("0V12M");
             }
             codeScan.close();
 

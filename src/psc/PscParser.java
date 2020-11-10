@@ -39,10 +39,10 @@ public class PscParser extends ParserGenerator{
 
     private void ajouterExpressions(){
 
-        ajouterExpression("ENTIER POINT ENTIER", new Ast<Reel>(0) {
+        ajouterExpression("REEL", new Ast<Reel>(0) {
             @Override
             public Reel run(List<Object> p) {
-                return new Reel((Token) p.get(0), (Token) p.get(2));
+                return new Reel((Token) p.get(0));
             }
         });
 

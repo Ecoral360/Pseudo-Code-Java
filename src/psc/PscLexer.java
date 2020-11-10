@@ -9,6 +9,8 @@ import generateurs.lexer.LexerGenerator;
 public class PscLexer extends LexerGenerator {
     public PscLexer(File configGrammaire) throws FileNotFoundException {
         setRegles(configGrammaire);
+        sortRegle();
+        //this.getReglesAjoutees().forEach(e -> System.out.println(e.getNom()));
     }
 
     private void setRegles(File configGrammaire){
@@ -25,7 +27,7 @@ public class PscLexer extends LexerGenerator {
                     commentaire = ! commentaire;
                 }
 
-                if (commentaire || line.isBlank()) {
+                if (commentaire || line.isBlank() || line.startsWith("#")) {
                     continue;
                 } else {
                     if (line.startsWith("[") && line.endsWith("]")) {
@@ -36,14 +38,15 @@ public class PscLexer extends LexerGenerator {
 
                 switch (section) {
                     case "Ajouter":
-                    String[] elements = line.split("->");
+                    String[] elements = line.split("->", 2);
+                    
                     ajouterRegle(elements[0].trim(), elements[1].trim());
                     //System.out.println(elements[0].trim() + " " + elements[1].trim().substring(1, elements[1].trim().length()-1));
                     break;
 
                     case "Ignorer":
                     ignorerRegle(line);
-                    //System.out.println(line.substring(1, line.length()-1));
+                    //System.out.println(line);
                     break;
 
                     default:
@@ -52,6 +55,7 @@ public class PscLexer extends LexerGenerator {
         }
 
         grammaire.close();
+
 
         } catch (FileNotFoundException e) {
             ajouterRegle("AFFICHER", "afficher");

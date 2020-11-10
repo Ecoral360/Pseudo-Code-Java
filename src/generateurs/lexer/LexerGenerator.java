@@ -1,6 +1,8 @@
 package generateurs.lexer;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +21,16 @@ public class LexerGenerator {
 
     protected void ajouterRegle(String nom, String pattern){
         this.reglesAjoutees.add(new Regle(nom, pattern));
+    }
+
+    protected void sortRegle(){
+        Collections.sort(this.reglesAjoutees, new Comparator<Regle>(){
+            @Override
+            public int compare(Regle o1, Regle o2) {
+                return o2.getPattern().length() - o1.getPattern().length();
+            }
+            
+        });
     }
 
     protected void ignorerRegle(String pattern){
