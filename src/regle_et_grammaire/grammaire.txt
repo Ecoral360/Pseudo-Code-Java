@@ -30,7 +30,7 @@
     LIRE            ->      lire
 
     # operateur
-    ASSIGNEMENT     ->      ->
+    ASSIGNEMENT     ->      <-
 
     # type de donnees 
     ENTIER          ->      \d+
@@ -66,6 +66,8 @@
     # sous-categorie
     # le point indique aussi un nombre decimal
     POINT           ->      \.
+
+    NOM_VARIABLE    ->      \w+
     
     
 

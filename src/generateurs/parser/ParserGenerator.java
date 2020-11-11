@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import ast.Ast;
 import tokens.Token;
@@ -39,14 +41,14 @@ public class ParserGenerator {
 
     protected void setOrdreProgramme(){
         for (int i = 0; i < this.programmes.size(); ++i){
-            this.ordreProgrammes.add("");
+            this.ordreProgrammes.add(null);
         }
         for (String nom : this.programmes.keySet()){
             int importance = this.programmes.get(nom).getImportance();
             if (importance == -1){
                 this.ordreProgrammes.add(nom);
             } else {
-                if (this.ordreProgrammes.get(importance).isEmpty()){
+                if (this.ordreProgrammes.get(importance) == null){
                     this.ordreProgrammes.set(importance, nom);
                 } else {
                     this.ordreProgrammes.add(importance, nom);
@@ -54,20 +56,20 @@ public class ParserGenerator {
                 
             }
         }
-        this.ordreProgrammes.removeIf(e -> e.isBlank());
+        this.ordreProgrammes.removeIf(e -> e == null);
         //System.out.println(this.ordreProgrammes);
     }
 
     protected void setOrdreExpression(){
         for (int i = 0; i < this.expressions.size(); ++i){
-            this.ordreExpressions.add("");
+            this.ordreExpressions.add(null);
         }
         for (String nom : this.expressions.keySet()){
             int importance = this.expressions.get(nom).getImportance();
             if (importance == -1){
                 this.ordreExpressions.add(nom);
             } else {
-                if (this.ordreExpressions.get(importance).isEmpty()){
+                if (this.ordreExpressions.get(importance) == null){
                     this.ordreExpressions.set(importance, nom);
                 } else {
                     this.ordreExpressions.add(importance, nom);
@@ -75,28 +77,27 @@ public class ParserGenerator {
                 
             }
         }
-        this.ordreExpressions.removeIf(e -> e.isBlank());
+        this.ordreExpressions.removeIf(e -> e == null);
         //System.out.println(this.ordreExpressions);
     }
 
 
 
-    public boolean containsAllInRelativePosition(ArrayList<?> container, ArrayList<?> content) {
-        ArrayList<?> containerCopy = new ArrayList<>(container);
-        if (containerCopy.isEmpty() && content.isEmpty()) {
-            return true;
-        }
-        if ((containerCopy.retainAll(content) || containerCopy.equals(content)) && ! (containerCopy.isEmpty() || content.isEmpty())) {
-            return containerCopy.equals(content);
-        }
-        return false;
+    public boolean memeStructure(String line, String programmePotentiel) {
+        Pattern structureProgramme = Pattern.compile(programmePotentiel.replaceAll("( ?)expression ?", ".+"));
+        //System.out.println(programmePotentiel.replaceAll("( ?)expression ?", ".+") + " " + structureProgramme.matcher(line).matches());
+
+        return (structureProgramme.matcher(line).matches());
     }
 
 
-    public Object parse(List<Token> listToken){
+    public Object parse(List<Token> listToken) {
         //System.out.println("\n");
 
         String programme = getProgramme(listToken);
+        if (programme == null){
+            throw new Error("Programme invalide");
+        }
         //System.out.println("Programme trouvé: " + programme);
 
         ArrayList<ArrayList<Token>> expressions = getExpressions(listToken, programme);
@@ -104,30 +105,45 @@ public class ParserGenerator {
 
         List<Object> expressionsResolues = new ArrayList<>();
 
-        for (ArrayList<Token> expression : expressions){
+        for (ArrayList<Token> expression : expressions) {
             ArrayList<Object> resolu = resoudreExpressions(expression);
-            if (resolu.size() > 1){
+            if (resolu.size() > 1) {
                 throw new Error("Expression invalide: " + resolu);
-            } else{
+            } else {
                 expressionsResolues.add(resolu.get(0));
             }
             
             //System.out.println("Expressions résolues: " + resolu.get(0));
         }
-        return this.programmes.get(programme).run(expressionsResolues);
+
+        ArrayList<Object> finalLine = new ArrayList<>();
+
+        Scanner line = new Scanner(programme).useDelimiter(" "); 
+        Iterator<Object> expressionIt = expressionsResolues.iterator();
+        Iterator<Token> programmeIt = listToken.iterator();
+        
+        line.forEachRemaining(token -> {
+            if (token.equals("expression")){
+                finalLine.add(expressionIt.hasNext() ? expressionIt.next() : null);
+            } else {
+                finalLine.add(programmeIt.hasNext() ? programmeIt.next() : null);
+            }
+        });
+        line.close();
+
+        return this.programmes.get(programme).run(finalLine);
     }
 
 
     public String getProgramme(List<Token> listToken) {
         String programmeTrouve = null;
-        ArrayList<String> structureLine = new ArrayList<>();
+        List<String> structureLine = new ArrayList<>();
         listToken.forEach(e -> structureLine.add(e.getNom()));
 
         for (String programme : this.ordreProgrammes){
-            ArrayList<String> structureProgramme = new ArrayList<>(Arrays.asList(programme.split(" ")));
-            structureProgramme.removeIf(e -> e.equals("expression"));
+            //System.out.println(structureProgramme + " " + structureLine);
             
-            if (containsAllInRelativePosition(structureLine, structureProgramme)) {
+            if (memeStructure(String.join(" ", structureLine), programme)) {
                 programmeTrouve = programme;
                 break;
             }

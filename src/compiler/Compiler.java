@@ -1,6 +1,7 @@
 package compiler;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 
 
@@ -35,16 +36,29 @@ Système de coordonnées:
 public class Compiler {
 
     String coord = "0M";
+    Hashtable<String, String> coordDict = new Hashtable<>();
 
     Compiler(ArrayList<String> codeList){
     }
 
     Compiler(ArrayList<String> codeList, String start){
-        this.coord = start;
+        this.coord = start == null ? this.coord : start;
     }
 
-    public static String prochaineCoord(String coord){
-        //System.out.println(Compiler.plusUn(coord));
+    public String getDictCoord(ArrayList<String> lines){
+        for (String line: lines){
+            switch (line){
+
+            case "":
+            break;
+
+            default:
+            this.coordDict.put(this.coord, line);
+            this.coord = Compiler.plusUn(this.coord);
+            break;
+        }
+        }
+        
         return null;
     }
 
@@ -52,7 +66,6 @@ public class Compiler {
         String reste = coord.split("^\\d+")[1];
         String premierNum = coord.replace(reste, "");
         int nextNum = Integer.valueOf(premierNum) + 1;
-
         return nextNum + reste;
     }
 }

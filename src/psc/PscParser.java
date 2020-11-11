@@ -9,6 +9,8 @@ import tokens.Token;
 
 
 public class PscParser extends ParserGenerator{
+    VariableManager variableManager = new VariableManager();
+    
     public PscParser(){
         ajouterProgrammes();
         ajouterExpressions();
@@ -16,6 +18,13 @@ public class PscParser extends ParserGenerator{
 
 
     private void ajouterProgrammes(){
+
+        ajouterProgramme("", new Ast<Object>(){
+            @Override
+            public Object run(List<Object> p) {
+                return null;
+            }
+        });
 
         ajouterProgramme("expression", new Ast<Object>(){
             @Override
@@ -27,8 +36,15 @@ public class PscParser extends ParserGenerator{
         ajouterProgramme("AFFICHER expression", new Ast<Object>(){
             @Override
             public Object run(List<Object> p) {
-                System.out.println(((PscAst<?>) p.get(0)).eval());
+                System.out.println(((PscAst<?>) p.get(1)).eval());
                 return null;
+            }
+        });
+
+        ajouterExpression("NOM_VARIABLE ASSIGNEMENT expression", new Ast<Variable>(){
+            @Override
+            public Variable run(List<Object> p) {
+                return new Variable(((Token) p.get(0)).getValeur(), (PscAst<?>) p.get(2));
             }
         });
 
@@ -61,6 +77,13 @@ public class PscParser extends ParserGenerator{
             }
         });
 
+        ajouterExpression("NOM_VARIABLE", new Ast<Object>(0) {
+            @Override
+            public Object run(List<Object> p) {
+                return VariableManager.varDict.get(VariableManager.varDispo).get(((Token) p.get(0)).getValeur()).getValeur();
+            }
+        });
+
         ajouterExpression("PARENT_OUV expression PARENT_FERM", new Ast<Object>(2){
             @Override
             public Object run(List<Object> p) {
@@ -69,7 +92,7 @@ public class PscParser extends ParserGenerator{
         });
 
 
-        ajouterExpression("expression MOD expression", new Ast<Object>(3){
+        ajouterExpression("expression MOD expression", new Ast<Object>(3) {
             @Override
             public Object run(List<Object> p) {
                 return new BinaryOp(p.get(0), p.get(2)).mod();
@@ -114,6 +137,9 @@ public class PscParser extends ParserGenerator{
                 return new BinaryOp(p.get(0), p.get(2)).sou();
             }
         });
+
+
+        
 
         
 

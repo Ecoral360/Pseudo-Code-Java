@@ -27,7 +27,7 @@ public class Main {
             while (codeScan.hasNextLine()){
                 String line = codeScan.nextLine();
                 codeList.add(line);
-                Compiler.prochaineCoord("0V12M");
+                //Compiler.prochaineCoord("0V12M");
             }
             codeScan.close();
 

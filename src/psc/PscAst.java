@@ -1,22 +1,73 @@
 package psc;
 
-import java.util.ArrayList;
+import java.util.Hashtable;
 
 import tokens.Token;
 
 public interface PscAst<T> {
     
     class VariableManager {
-        ArrayList<Variable> varDispo = new ArrayList<>();
+        static Hashtable<String, Hashtable<String, Variable>> varDict = new Hashtable<>();
+        
+        static String varDispo = "<main>";
 
         VariableManager() {
-
+            VariableManager.varDict.putIfAbsent("<main>", new Hashtable<String, Variable>());
         }
+
+        public static void changerValeur(String nom, PscAst<?> newValeur) {
+            Variable var = VariableManager.varDict.get(VariableManager.varDispo).get(nom);
+            PscAst<?> oldValeur = var.getValeur();
+            
+            if (oldValeur.getClass() == newValeur.getClass()){
+                var.setValeur(newValeur);
+                VariableManager.varDict.get(VariableManager.varDispo).put(nom, var);
+
+            } else{
+                throw new Error("La variable '" + 
+                                nom + 
+                                "' de type '" + 
+                                oldValeur.getClass() + 
+                                "' ne peut pas prendre une valeur de type '" + 
+                                newValeur.getClass() + 
+                                "'.");
+            }
+            
+        }
+
+
     }
 
-    class Variable {
-        Variable() {
+    class Variable implements PscAst<Object>{
+        
+        private String nom;
+        private PscAst<?> valeur = null;
 
+        
+        Variable(String nom, PscAst<?> valeur) {
+            this.nom = nom;
+            if (VariableManager.varDict.get(VariableManager.varDispo).containsKey(this.nom)){
+                VariableManager.changerValeur(nom, valeur);
+            } else {
+                this.valeur = valeur;
+                VariableManager.varDict.get(VariableManager.varDispo).put(this.nom, this);
+            }
+        }
+
+        public void setValeur(PscAst<?> valeur){
+            this.valeur = valeur;
+        }
+
+        public String getNom(){
+            return this.nom;
+        }
+
+        public PscAst<?> getValeur(){
+            return this.valeur;
+        }
+
+        public Object eval(){
+            return this.valeur.eval();
         }
     }
 
