@@ -34,7 +34,11 @@ public class Main {
             File configGrammaire = new File("src/regle_et_grammaire/grammaire.txt");
 
             PscLexer lexer = new PscLexer(configGrammaire);
+
+            Compiler compiler = new Compiler();
             PscParser parser = new PscParser();
+            
+            compiler.getDictCoord(codeList, lexer, parser);
 
             for (String line : codeList){
                 List<Token> tokens = lexer.lex(line);

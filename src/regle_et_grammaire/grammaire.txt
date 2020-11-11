@@ -26,11 +26,19 @@
 
 [Ajouter]
     # commande
-    AFFICHER        ->      afficher
-    LIRE            ->      lire
+    AFFICHER        ->      \bafficher\b
+    LIRE            ->      \blire\b
 
     # operateur
     ASSIGNEMENT     ->      <-
+
+
+    # bloc
+    SI              ->      \bsi\b
+    ALORS           ->      \balors\b
+    SINON           ->      \bsinon\b
+    FIN_SI          ->      \bfin si\b
+
 
     # type de donnees 
     ENTIER          ->      \d+
@@ -44,7 +52,8 @@
     MUL             ->      \*
     MOINS           ->      -
     DIV             ->      \\
-    MOD             ->      mod|[%]
+    MOD             ->      \bmod\b|[%]
+
 
     # comparateur binaire
     EGAL            ->      =
@@ -59,9 +68,11 @@
     OU              ->      ou
     PAS             ->      pas
 
+
     # separateur
     PARENT_OUV      ->      [(]
     PARENT_FERM     ->      [)]
+
 
     # sous-categorie
     # le point indique aussi un nombre decimal

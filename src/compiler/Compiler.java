@@ -2,6 +2,11 @@ package compiler;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
+
+import psc.PscLexer;
+import psc.PscParser;
+import tokens.Token;
 
 
 
@@ -38,25 +43,29 @@ public class Compiler {
     String coord = "0M";
     Hashtable<String, String> coordDict = new Hashtable<>();
 
-    Compiler(ArrayList<String> codeList){
+    public Compiler(){
     }
 
-    Compiler(ArrayList<String> codeList, String start){
+    public Compiler(String start){
         this.coord = start == null ? this.coord : start;
     }
 
-    public String getDictCoord(ArrayList<String> lines){
+    public String getDictCoord(ArrayList<String> lines, PscLexer lexer, PscParser parser){
         for (String line: lines){
-            switch (line){
+            String programme = parser.getProgramme(lexer.lex(line));
 
-            case "":
-            break;
+            switch (programme){
+                case "SI expression ALORS":
 
-            default:
-            this.coordDict.put(this.coord, line);
-            this.coord = Compiler.plusUn(this.coord);
-            break;
-        }
+                break;
+
+                
+
+                default:
+                this.coordDict.put(this.coord, line);
+                this.coord = Compiler.plusUn(this.coord);
+                break;
+            }
         }
         
         return null;

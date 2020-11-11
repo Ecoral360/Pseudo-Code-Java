@@ -41,7 +41,14 @@ public class PscParser extends ParserGenerator{
             }
         });
 
-        ajouterExpression("NOM_VARIABLE ASSIGNEMENT expression", new Ast<Variable>(){
+        ajouterProgramme("SI expression ALORS", new Ast<Boolean>(){
+            @Override
+            public Boolean run(List<Object> p) {
+                return true;
+            }
+        });
+
+        ajouterProgramme("NOM_VARIABLE ASSIGNEMENT expression", new Ast<Variable>(){
             @Override
             public Variable run(List<Object> p) {
                 return new Variable(((Token) p.get(0)).getValeur(), (PscAst<?>) p.get(2));
