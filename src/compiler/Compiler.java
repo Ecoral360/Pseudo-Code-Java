@@ -38,7 +38,7 @@ Système de coordonnées:
 
 public class Compiler {
 
-    String coord = "0M";
+    String coord = "<0>main";
     Hashtable<String, String> coordDict = new Hashtable<>();
 
     public Compiler(){
@@ -48,9 +48,15 @@ public class Compiler {
         this.coord = start == null ? this.coord : start;
     }
 
+    public void nouveauBloc(String nom){
+        this.coord = "<0>" + nom + this.coord;
+    }
+
     public String getDictCoord(ArrayList<String> lines, PscLexer lexer, PscParser parser){
         for (String line: lines){
             String programme = parser.getProgramme(lexer.lex(line));
+
+            System.out.println(this.coord);
 
             switch (programme){
                 case "SI expression ALORS":
@@ -70,9 +76,8 @@ public class Compiler {
     }
 
     public static String plusUn(String coord){
-        String reste = coord.split("^\\d+")[1];
-        String premierNum = coord.replace(reste, "");
+        String premierNum = coord.substring(coord.indexOf("<")+1, coord.indexOf(">"));
         int nextNum = Integer.valueOf(premierNum) + 1;
-        return nextNum + reste;
+        return "<" + nextNum + coord.substring(coord.indexOf(">"));
     }
 }

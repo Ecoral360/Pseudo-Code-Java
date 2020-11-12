@@ -111,12 +111,7 @@ public class ParserGenerator {
 
 
 
-    public boolean memeStructure(String line, String structurePotentielle) {
-        Pattern structurePattern = Pattern.compile(structurePotentielle.replaceAll("( ?)expression ?", Matcher.quoteReplacement("\\b.+")));
-        //System.out.println(programmePotentiel.replaceAll("( ?)expression ?", ".+") + " " + structureProgramme.matcher(line).matches());
-
-        return (structurePattern.matcher(line).matches());
-    }
+    
 
 
     public Object parse(List<Token> listToken) {
@@ -146,19 +141,20 @@ public class ParserGenerator {
 
         ArrayList<Object> finalLine = new ArrayList<>();
 
-        Scanner line = new Scanner(programme).useDelimiter(" "); 
+        
         Iterator<Object> expressionIt = expressionsResolues.iterator();
         Iterator<Token> programmeIt = listToken.iterator();
         
-        line.forEachRemaining(token -> {
+        Scanner lineScan = new Scanner(programme).useDelimiter(" "); 
+        lineScan.forEachRemaining(token -> {
             if (token.equals("expression")){
                 finalLine.add(expressionIt.hasNext() ? expressionIt.next() : null);
             } else {
                 finalLine.add(programmeIt.hasNext() ? programmeIt.next() : null);
             }
         });
-        line.close();
-
+        lineScan.close();
+        
         return this.programmes.get(programme).run(finalLine);
     }
 
@@ -248,5 +244,13 @@ public class ParserGenerator {
         }
     
         return expressionArray;
+    }
+
+
+    public static boolean memeStructure(String line, String structurePotentielle) {
+        Pattern structurePattern = Pattern.compile(structurePotentielle.replaceAll("( ?)expression ?", Matcher.quoteReplacement("\\b.+")));
+        //System.out.println(programmePotentiel.replaceAll("( ?)expression ?", ".+") + " " + structureProgramme.matcher(line).matches());
+
+        return (structurePattern.matcher(line).matches());
     }
 }
