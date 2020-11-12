@@ -62,25 +62,27 @@ public class PscParser extends ParserGenerator{
 
     private void ajouterExpressions(){
 
-        ajouterExpression("REEL", new Ast<Reel>(0) {
+        ajouterExpression("{type_de_donnees}", new Ast<Object>(0) {
             @Override
-            public Reel run(List<Object> p) {
-                return new Reel((Token) p.get(0));
-            }
-        });
+            public Object run(List<Object> p) {
+                Token valeur = (Token) p.get(0);
+                String nom = valeur.getNom();
+                switch (nom) {
+                    case "ENTIER":
+                    return new Entier(valeur);
 
-        ajouterExpression("ENTIER", new Ast<Entier>(1){
-            @Override
-            public Entier run(List<Object> p) {
-                return new Entier((Token) p.get(0));
-            }
-        });
+                    case "REEL":
+                    return new Reel(valeur);
 
+                    case "CHAINE":
+                    return new Chaine(valeur);
 
-        ajouterExpression("CHAINE", new Ast<Chaine>(1){
-            @Override
-            public Chaine run(List<Object> p) {
-                return new Chaine((Token) p.get(0));
+                    case "BOOLEEN":
+                    return new Booleen(valeur);
+                
+                    default:
+                    throw new Error("Type de donnee invalide");
+                }
             }
         });
 
@@ -145,11 +147,35 @@ public class PscParser extends ParserGenerator{
             }
         });
 
+        ajouterExpression("expression {comparaison} expression", new Ast<Booleen>(6){
+            @Override
+            public Booleen run(List<Object> p) {
+                String nom = ((Token) p.get(1)).getNom();
+                BinaryComp comp = new BinaryComp(p.get(0), p.get(2));
+                switch (nom) {
+                    case "EGAL":
+                    return comp.egal();
 
-        
+                    case "PAS_EGAL":
+                    return comp.pasEgal();
 
-        
+                    case "PLUS_GRAND":
+                    return comp.plusGrand();
 
+                    case "PLUS_PETIT":
+                    return comp.plusPetit();
+
+                    case "PLUS_GRAND_EGAL":
+                    return comp.plusGrandEgal();
+
+                    case "PLUS_PETIT_EGAL":
+                    return comp.plusPetitEgal();
+                
+                    default:
+                    throw new Error("Comparaison invalide");
+                }
+            }
+        });
         setOrdreExpression();
     }
 }

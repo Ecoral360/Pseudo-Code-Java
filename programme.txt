@@ -1,17 +1,4 @@
-afficher 3 + 2 * 4
 
-afficher 1.9
-afficher "oo" * 3
-afficher 11 mod 3
 
-question <- 1
 
-bonjour <- 12
-
-afficher question
-
-question <- bonjour
-
-afficher question
-
-afficher bonjour
+afficher 3 < 7

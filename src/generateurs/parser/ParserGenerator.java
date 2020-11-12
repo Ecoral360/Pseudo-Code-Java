@@ -6,9 +6,11 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ast.Ast;
+import generateurs.lexer.regle.Regle;
 import tokens.Token;
 
 public class ParserGenerator {
@@ -19,39 +21,65 @@ public class ParserGenerator {
     ArrayList<String> ordreExpressions = new ArrayList<>();
 
     public ParserGenerator(){
-
     }
+
+    private String remplacerCategoriesParMembre(String pattern){
+        String nouveauPattern = pattern;
+
+        for (String motClef : pattern.split(" ")){  // on divise le pattern en mot clef afin d'evaluer ceux qui sont des categories (une categorie est entouree par des {})
+            if (motClef.startsWith("{") && motClef.endsWith("}")){  // on test si le mot clef est une categorie
+                ArrayList<String> membresCategorie = Regle.getMembreCategorie(motClef.substring(1, motClef.length()-1)); // on va chercher les membres de la categorie (toutes les regles)
+                if (membresCategorie == null){      
+                    throw new Error("La categorie: '" + pattern + "' n'existe pas");    // si la categorie n'existe pas, on lance une erreur
+                } else {
+                   nouveauPattern = nouveauPattern.replace(motClef, "(" + String.join("|", membresCategorie) + ")");     
+                        // on remplace la categorie par les membres de la categorie
+                        // pour ce faire, on entoure les membres dans des parentheses et on
+                        // separe les membres par des |
+                        // de cette facon, lorsque nous allons tester par regex si une ligne correspond
+                        // a un programme ou une expression, la categorie va "matcher" avec
+                        // tous les membres de celle-ci  
+                }
+            }
+        }
+        return nouveauPattern;  // on retourne le pattern avec les categories chag
+    }
+
  
-    protected void ajouterProgramme(String nom, Ast<?> fonction) { 
+    protected void ajouterProgramme(String pattern, Ast<?> fonction) { 
         /*
             importance : 0 = plus important
             si plusieurs programmes ont la même importance, le dernier ajouté sera priorisé
         */
-        this.programmes.put(nom, fonction);
 
+        String nouveauPattern = remplacerCategoriesParMembre(pattern); // remplace les categories par ses membres, s'il n'y a pas de categorie, ne modifie pas le pattern
+
+        this.programmes.put(nouveauPattern, fonction);
     }
 
-    protected void ajouterExpression(String nom, Ast<?> fonction) {  
+    protected void ajouterExpression(String pattern, Ast<?> fonction) {  
         /*
             importance : 0 = plus important
             si plusieurs expressions ont la même importance, la dernière ajoutée sera priorisée
         */
-        this.expressions.put(nom, fonction);
+        String nouveauPattern = remplacerCategoriesParMembre(pattern);
+
+        this.expressions.put(nouveauPattern, fonction);
     }
 
     protected void setOrdreProgramme(){
         for (int i = 0; i < this.programmes.size(); ++i){
             this.ordreProgrammes.add(null);
         }
-        for (String nom : this.programmes.keySet()){
-            int importance = this.programmes.get(nom).getImportance();
+        for (String pattern : this.programmes.keySet()){
+            int importance = this.programmes.get(pattern).getImportance();
             if (importance == -1){
-                this.ordreProgrammes.add(nom);
+                this.ordreProgrammes.add(pattern);
             } else {
                 if (this.ordreProgrammes.get(importance) == null){
-                    this.ordreProgrammes.set(importance, nom);
+                    this.ordreProgrammes.set(importance, pattern);
                 } else {
-                    this.ordreProgrammes.add(importance, nom);
+                    this.ordreProgrammes.add(importance, pattern);
                 }
                 
             }
@@ -64,15 +92,15 @@ public class ParserGenerator {
         for (int i = 0; i < this.expressions.size(); ++i){
             this.ordreExpressions.add(null);
         }
-        for (String nom : this.expressions.keySet()){
-            int importance = this.expressions.get(nom).getImportance();
+        for (String pattern : this.expressions.keySet()){
+            int importance = this.expressions.get(pattern).getImportance();
             if (importance == -1){
-                this.ordreExpressions.add(nom);
+                this.ordreExpressions.add(pattern);
             } else {
                 if (this.ordreExpressions.get(importance) == null){
-                    this.ordreExpressions.set(importance, nom);
+                    this.ordreExpressions.set(importance, pattern);
                 } else {
-                    this.ordreExpressions.add(importance, nom);
+                    this.ordreExpressions.add(importance, pattern);
                 }
                 
             }
@@ -83,11 +111,11 @@ public class ParserGenerator {
 
 
 
-    public boolean memeStructure(String line, String programmePotentiel) {
-        Pattern structureProgramme = Pattern.compile(programmePotentiel.replaceAll("( ?)expression ?", ".+"));
+    public boolean memeStructure(String line, String structurePotentielle) {
+        Pattern structurePattern = Pattern.compile(structurePotentielle.replaceAll("( ?)expression ?", Matcher.quoteReplacement("\\b.+")));
         //System.out.println(programmePotentiel.replaceAll("( ?)expression ?", ".+") + " " + structureProgramme.matcher(line).matches());
 
-        return (structureProgramme.matcher(line).matches());
+        return (structurePattern.matcher(line).matches());
     }
 
 
@@ -138,7 +166,10 @@ public class ParserGenerator {
     public String getProgramme(List<Token> listToken) {
         String programmeTrouve = null;
         List<String> structureLine = new ArrayList<>();
-        listToken.forEach(e -> structureLine.add(e.getNom()));
+        listToken.forEach(e -> {
+            String nom = e.getNom();
+            structureLine.add(nom);
+        });
 
         for (String programme : this.ordreProgrammes){
             //System.out.println(structureProgramme + " " + structureLine);
@@ -189,20 +220,18 @@ public class ParserGenerator {
         
         //System.out.println(this.ordreExpressions);
         
-        for (String expression : this.ordreExpressions){
+        for (String expression : this.ordreExpressions) {
 
             List<String> expressionNom = new ArrayList<>();
             expressionArray.forEach(e -> expressionNom.add(e instanceof Token ? ((Token) e).getNom() : "expression"));
             //System.out.println("Nom " + expressionNom);
 
-            ArrayList<String> structureExpression = new ArrayList<>(Arrays.asList(expression.split(" ")));
+            int longueurExpression = expression.split(" ").length;
 
-            int longueurExpression = structureExpression.size();
+            if (expressionArray.size() >= longueurExpression) {
+                for (int i = 0; i + longueurExpression <= expressionArray.size(); ++i) {
 
-            if (expressionArray.size() >= longueurExpression){
-                
-                for (int i = 0; i + longueurExpression <= expressionArray.size(); ++i){
-                    if (expressionNom.subList(i, i+longueurExpression).equals(structureExpression)){
+                    if (memeStructure(String.join(" ", expressionNom.subList(i, i+longueurExpression)), expression)) {
                         Object resolu = this.expressions.get(expression).run(expressionArray.subList(i, i+longueurExpression));
                         
                         ArrayList<Object> newArray = new ArrayList<>();

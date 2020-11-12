@@ -1,7 +1,7 @@
 package tokens;
 
 public class Token {
-    
+
     private String nom, valeur;
 
     public Token(String nom, String valeur){

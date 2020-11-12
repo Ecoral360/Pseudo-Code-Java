@@ -129,6 +129,24 @@ public interface PscAst<T> {
         }
     }
 
+    class Booleen implements PscAst<Boolean>{
+        private boolean valeur;
+        
+        Booleen(Token valeur){
+            this.valeur = valeur.getValeur().equals("vrai");
+        }
+
+        Booleen(Boolean valeur){
+            this.valeur = valeur.booleanValue();
+        }
+
+        @Override
+        public Boolean eval() {
+            return valeur;
+        }
+
+    }
+
     
 
 
@@ -188,6 +206,56 @@ public interface PscAst<T> {
         BinaryComp(Object gauche, Object droite){
             this.gauche = (PscAst<?>) gauche;
             this.droite = (PscAst<?>) droite;
+        }
+
+        public Booleen egal(){
+            return new Booleen(this.gauche.eval().equals(this.droite.eval()));
+        }
+
+        public Booleen pasEgal(){
+            return new Booleen(! this.gauche.eval().equals(this.droite.eval()));
+        }
+
+        public Booleen plusGrand(){
+            return new Booleen(((Number) this.gauche.eval()).doubleValue() > ((Number) this.droite.eval()).doubleValue());
+        }
+
+        public Booleen plusPetit(){
+
+            return new Booleen(((Number) this.gauche.eval()).doubleValue() < ((Number) this.droite.eval()).doubleValue());
+        }
+
+        public Booleen plusGrandEgal(){
+            return new Booleen(((Number) this.gauche.eval()).doubleValue() >= ((Number) this.droite.eval()).doubleValue());
+        }
+
+        public Booleen plusPetitEgal(){
+            return new Booleen(((Number) this.gauche.eval()).doubleValue() <= ((Number) this.droite.eval()).doubleValue());
+        }
+    }
+
+    class porteLogique{
+        Booleen gauche, droite;
+
+        porteLogique(Object gauche, Object droite){
+            this.gauche = (Booleen) gauche;
+            this.droite = (Booleen) droite;
+        }
+
+        porteLogique(Object gauche){
+            this.gauche = (Booleen) gauche;
+        }
+
+        public Booleen et(){
+            return new Booleen(Boolean.logicalAnd(this.gauche.eval(), this.droite.eval()));
+        }
+
+        public Booleen ou(){
+            return new Booleen(Boolean.logicalOr(this.gauche.eval(), this.droite.eval()));
+        }
+
+        public Booleen pas(){
+            return new Booleen(! this.gauche.eval());
         }
     }
 
