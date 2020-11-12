@@ -43,10 +43,12 @@
 
 
 [Ajouter]
+
     commande {
-    AFFICHER        ->      \bafficher\b
-    LIRE            ->      \blire\b
+        AFFICHER        ->      \bafficher\b
+        LIRE            ->      \blire\b
     }
+
     # operateur
     ASSIGNEMENT     ->      <-
 
@@ -63,6 +65,7 @@
         REEL            ->      \d+\.\d+
         CHAINE          ->      ".*?"
         BOOLEEN         ->      vrai|faux
+        NUL             ->      nul
     }
 
     arithmetique {

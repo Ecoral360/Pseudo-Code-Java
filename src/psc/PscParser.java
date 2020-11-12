@@ -3,6 +3,7 @@ package psc;
 import java.util.List;
 
 import ast.Ast;
+import executeur.Executeur;
 import generateurs.parser.ParserGenerator;
 import psc.PscAst.*;
 import tokens.Token;
@@ -22,14 +23,14 @@ public class PscParser extends ParserGenerator{
         ajouterProgramme("", new Ast<Object>(){
             @Override
             public Object run(List<Object> p) {
-                return null;
+                return new Nul();
             }
         });
 
         ajouterProgramme("expression", new Ast<Object>(){
             @Override
             public Object run(List<Object> p) {
-                return null;
+                return p.size() == 0 ? new Nul() : p.get(0);
             }
         });
 
@@ -37,14 +38,7 @@ public class PscParser extends ParserGenerator{
             @Override
             public Object run(List<Object> p) {
                 System.out.println(((PscAst<?>) p.get(1)).eval());
-                return null;
-            }
-        });
-
-        ajouterProgramme("SI expression ALORS", new Ast<Boolean>(){
-            @Override
-            public Boolean run(List<Object> p) {
-                return true;
+                return new Nul();
             }
         });
 
@@ -55,6 +49,25 @@ public class PscParser extends ParserGenerator{
             }
         });
 
+        ajouterProgramme("SI expression ALORS", new Ast<Booleen>(){
+            @Override
+            public Booleen run(List<Object> p) {
+                if (((Booleen) p.get(1)).eval()){
+                    Executeur.nouveauBloc("si");
+                } else {
+                    Executeur.nouveauBloc("sinon");
+                }
+                return new Booleen(true);
+            }
+        });
+
+        ajouterProgramme("FIN_SI", new Ast<Object>(){
+            @Override
+            public Object run(List<Object> p) {
+                Executeur.finBloc();
+                return new Nul();
+            }
+        });
         setOrdreProgramme();
     }
 
@@ -79,6 +92,9 @@ public class PscParser extends ParserGenerator{
 
                     case "BOOLEEN":
                     return new Booleen(valeur);
+
+                    case "NUL":
+                    return new Nul();
                 
                     default:
                     throw new Error("Type de donnee invalide");

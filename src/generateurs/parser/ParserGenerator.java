@@ -42,7 +42,7 @@ public class ParserGenerator {
                 }
             }
         }
-        return nouveauPattern;  // on retourne le pattern avec les categories chag
+        return nouveauPattern;  // on retourne le pattern avec les categories changees
     }
 
  
@@ -109,9 +109,6 @@ public class ParserGenerator {
         //System.out.println(this.ordreExpressions);
     }
 
-
-
-    
 
 
     public Object parse(List<Token> listToken) {

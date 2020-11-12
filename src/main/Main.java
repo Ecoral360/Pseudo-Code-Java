@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import executeur.Executeur;
 import psc.PscLexer;
 import psc.PscParser;
 import tokens.Token;
-import compiler.Compiler;
 
 public class Main {
     public static void main(String[] args) {
@@ -34,11 +34,10 @@ public class Main {
             File configGrammaire = new File("src/regle_et_grammaire/grammaire.txt");
 
             PscLexer lexer = new PscLexer(configGrammaire);
-
-            Compiler compiler = new Compiler();
+            
             PscParser parser = new PscParser();
             
-            compiler.getDictCoord(codeList, lexer, parser);
+            Executeur.compile(codeList, lexer, parser);
 
             for (String line : codeList){
                 List<Token> tokens = lexer.lex(line);

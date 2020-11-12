@@ -2,6 +2,8 @@ package psc;
 
 import java.util.Hashtable;
 
+import javax.lang.model.type.NullType;
+
 import tokens.Token;
 
 public interface PscAst<T> {
@@ -145,6 +147,18 @@ public interface PscAst<T> {
             return valeur;
         }
 
+    }
+
+    class Nul implements PscAst<NullType> {
+
+        Nul(){
+            
+        }
+
+        @Override
+        public NullType eval() {
+            return null;
+        }
     }
 
     
