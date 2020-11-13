@@ -7,7 +7,7 @@ public class Ast<T> {
 
     public Ast(){}
     
-    public Ast(int importance){
+    public Ast(int importance) {
         this.importance = importance;
     }
 
@@ -16,7 +16,11 @@ public class Ast<T> {
         return this.importance;
     }
 
-    public T run(List<Object> p){
+    public T run(List<Object> p) {
         return null;
+    }
+
+    public String prochaineCoord(String coord) {
+        return coord;
     }
 }

@@ -24,7 +24,7 @@ public class Main {
         try {
             Scanner codeScan = new Scanner(codeFile);
 
-            while (codeScan.hasNextLine()){
+            while (codeScan.hasNextLine()) {
                 String line = codeScan.nextLine();
                 codeList.add(line);
                 //Compiler.prochaineCoord("0V12M");
@@ -34,15 +34,10 @@ public class Main {
             File configGrammaire = new File("src/regle_et_grammaire/grammaire.txt");
 
             PscLexer lexer = new PscLexer(configGrammaire);
-            
             PscParser parser = new PscParser();
             
-            Executeur.compile(codeList, lexer, parser);
-
-            for (String line : codeList){
-                List<Token> tokens = lexer.lex(line);
-                parser.parse(tokens);
-            }
+            Executeur.compiler(codeList, lexer, parser);
+            Executeur.executer(lexer, parser);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

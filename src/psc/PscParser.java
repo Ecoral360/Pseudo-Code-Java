@@ -9,7 +9,7 @@ import psc.PscAst.*;
 import tokens.Token;
 
 
-public class PscParser extends ParserGenerator{
+public class PscParser extends ParserGenerator {
     VariableManager variableManager = new VariableManager();
     
     public PscParser(){
@@ -49,6 +49,7 @@ public class PscParser extends ParserGenerator{
             }
         });
 
+
         ajouterProgramme("SI expression ALORS", new Ast<Booleen>(){
             @Override
             public Booleen run(List<Object> p) {
@@ -57,15 +58,38 @@ public class PscParser extends ParserGenerator{
                 } else {
                     Executeur.nouveauBloc("sinon");
                 }
-                return new Booleen(true);
+                return (Booleen) p.get(1);
+            }
+            @Override
+            public String prochaineCoord(String coord){
+                return Executeur.nouveauBloc("si");
             }
         });
+
+        
+        ajouterProgramme("SINON", new Ast<Object>(){
+            @Override
+            public Object run(List<Object> p) {
+                Executeur.finBloc();
+                return new Nul();
+            }
+            @Override
+            public String prochaineCoord(String coord){
+                Executeur.finBloc();
+                return Executeur.nouveauBloc("sinon");
+            }
+        });
+
 
         ajouterProgramme("FIN_SI", new Ast<Object>(){
             @Override
             public Object run(List<Object> p) {
                 Executeur.finBloc();
                 return new Nul();
+            }
+            @Override
+            public String prochaineCoord(String coord){
+                return Executeur.finBloc();
             }
         });
         setOrdreProgramme();

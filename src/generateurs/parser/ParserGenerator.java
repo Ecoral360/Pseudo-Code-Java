@@ -67,6 +67,15 @@ public class ParserGenerator {
         this.expressions.put(nouveauPattern, fonction);
     }
 
+    public Hashtable<String, Ast<?>> obtenirProgrammeDict() {
+        return this.programmes;
+    }
+
+    public Hashtable<String, Ast<?>> obtenirExpressionDict() {
+        return this.expressions;
+    }
+    
+
     protected void setOrdreProgramme(){
         for (int i = 0; i < this.programmes.size(); ++i){
             this.ordreProgrammes.add(null);
@@ -114,13 +123,13 @@ public class ParserGenerator {
     public Object parse(List<Token> listToken) {
         //System.out.println("\n");
 
-        String programme = getProgramme(listToken);
+        String programme = obtenirProgramme(listToken);
         if (programme == null){
             throw new Error("Programme invalide");
         }
         //System.out.println("Programme trouvé: " + programme);
 
-        ArrayList<ArrayList<Token>> expressions = getExpressions(listToken, programme);
+        ArrayList<ArrayList<Token>> expressions = obtenirExpressions(listToken, programme);
         //System.out.println("Expression trouvée: " + expressions);
 
         List<Object> expressionsResolues = new ArrayList<>();
@@ -156,7 +165,7 @@ public class ParserGenerator {
     }
 
 
-    public String getProgramme(List<Token> listToken) {
+    public String obtenirProgramme(List<Token> listToken) {
         String programmeTrouve = null;
         List<String> structureLine = new ArrayList<>();
         listToken.forEach(e -> {
@@ -176,7 +185,7 @@ public class ParserGenerator {
     }
 
 
-    public ArrayList<ArrayList<Token>> getExpressions(List<Token> listToken, String programme) {
+    public ArrayList<ArrayList<Token>> obtenirExpressions(List<Token> listToken, String programme) {
         ArrayList<String> structureLine = new ArrayList<>();
         listToken.forEach(e -> structureLine.add(e.getNom()));
 

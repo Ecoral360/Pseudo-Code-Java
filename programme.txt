@@ -2,3 +2,14 @@
 
 
 afficher "bonjour"
+
+
+si vrai alors
+    afficher "reussite"
+
+sinon
+    afficher "zut!"
+
+fin si
+
+afficher "fin"

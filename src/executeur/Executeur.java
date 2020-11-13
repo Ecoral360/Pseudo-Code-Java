@@ -2,9 +2,11 @@ package executeur;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import psc.PscLexer;
 import psc.PscParser;
+import tokens.Token;
 
 
 
@@ -41,8 +43,14 @@ public class Executeur {
     private static String coord = "<0>main";
     private static Hashtable<String, String> coordDict = new Hashtable<>();
 
-    public static void mettreCoord(String start){
-        coord = start;
+
+    public static void executer(PscLexer lexer, PscParser parser){
+        while (coordDict.containsKey(coord)){
+            String line = coordDict.get(coord);
+            List<Token> tokens = lexer.lex(line);
+            parser.parse(tokens);
+            coord = plusUn(coord);
+        }
     }
 
     public static String obtenirCoord(){
@@ -57,39 +65,28 @@ public class Executeur {
         coord = "<0>main";
     }
 
-
-    public static void nouveauBloc(String nom){
+    public static String nouveauBloc(String nom){
         coord = "<0>" + nom + coord;
-    }
-
-    public static void finBloc(){
-        coord = coord.replaceFirst("<.*(?=<)", "");
-    }
-
-    public static void compile(ArrayList<String> lines, PscLexer lexer, PscParser parser){
-        for (String line: lines){
-            String programme = parser.getProgramme(lexer.lex(line));
-
-            System.out.println(coord);
-
-            switch (programme){
-                case "SI expression ALORS":
-
-                break;
-
-            
-                default:
-                coordDict.put(coord, line);
-                coord = Executeur.plusUn(coord);
-                break;
-            }
-        }
-    }
-
-
-    public static String obtenirProchaineCoordonnee(){
-        coord = Executeur.plusUn(coord);
         return coord;
+    }
+
+    public static String finBloc(){
+        coord = coord.replaceFirst("<.*(?=<)", "");
+        return coord;
+    }
+
+    public static void compiler(ArrayList<String> lines, PscLexer lexer, PscParser parser){
+        for (String line: lines){
+            String programme = parser.obtenirProgramme(lexer.lex(line));
+
+            //System.out.println(coord);
+            
+            coordDict.put(coord, line);
+
+            coord = parser.obtenirProgrammeDict().get(programme).prochaineCoord(coord);
+            coord = Executeur.plusUn(coord);
+        }
+        reset();
     }
 
     public static String plusUn(String coord){

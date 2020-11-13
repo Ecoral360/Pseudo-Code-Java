@@ -150,10 +150,8 @@ public interface PscAst<T> {
     }
 
     class Nul implements PscAst<NullType> {
-
-        Nul(){
-            
-        }
+        
+        Nul(){}
 
         @Override
         public NullType eval() {
