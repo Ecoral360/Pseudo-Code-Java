@@ -1,15 +1,12 @@
 
+i <- 0
 
+tant que i < 10
+    si i % 2 = 0 alors
+        afficher "bonjour"
+    fin si
+    i <- i + 1
 
-afficher "bonjour"
-
-
-si vrai alors
-    afficher "reussite"
-
-sinon
-    afficher "zut!"
-
-fin si
+fin tant que
 
 afficher "fin"

@@ -1,5 +1,6 @@
 package psc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ast.Ast;
@@ -34,7 +35,7 @@ public class PscParser extends ParserGenerator {
             }
         });
 
-        ajouterProgramme("AFFICHER expression", new Ast<Object>(){
+        ajouterProgramme("AFFICHER expression", new Ast<Object>(0){
             @Override
             public Object run(List<Object> p) {
                 System.out.println(((PscAst<?>) p.get(1)).eval());
@@ -42,7 +43,7 @@ public class PscParser extends ParserGenerator {
             }
         });
 
-        ajouterProgramme("NOM_VARIABLE ASSIGNEMENT expression", new Ast<Variable>(){
+        ajouterProgramme("NOM_VARIABLE ASSIGNEMENT expression", new Ast<Variable>(0){
             @Override
             public Variable run(List<Object> p) {
                 return new Variable(((Token) p.get(0)).getValeur(), (PscAst<?>) p.get(2));
@@ -50,13 +51,15 @@ public class PscParser extends ParserGenerator {
         });
 
 
-        ajouterProgramme("SI expression ALORS", new Ast<Booleen>(){
+        ajouterProgramme("SI expression ALORS", new Ast<Booleen>(0){
             @Override
             public Booleen run(List<Object> p) {
                 if (((Booleen) p.get(1)).eval()){
                     Executeur.nouveauBloc("si");
                 } else {
-                    Executeur.nouveauBloc("sinon");
+                    if (Executeur.obtenirCoordDict().containsKey("<0>sinon" + Executeur.obtenirCoord())){
+                        Executeur.nouveauBloc("sinon");
+                    }
                 }
                 return (Booleen) p.get(1);
             }
@@ -66,8 +69,8 @@ public class PscParser extends ParserGenerator {
             }
         });
 
-        
-        ajouterProgramme("SINON", new Ast<Object>(){
+
+        ajouterProgramme("SINON", new Ast<Object>(0){
             @Override
             public Object run(List<Object> p) {
                 Executeur.finBloc();
@@ -80,8 +83,7 @@ public class PscParser extends ParserGenerator {
             }
         });
 
-
-        ajouterProgramme("FIN_SI", new Ast<Object>(){
+        ajouterProgramme("FIN_SI", new Ast<Object>(0){
             @Override
             public Object run(List<Object> p) {
                 Executeur.finBloc();
@@ -89,6 +91,34 @@ public class PscParser extends ParserGenerator {
             }
             @Override
             public String prochaineCoord(String coord){
+                return Executeur.finBloc();
+            }
+        });
+
+        ajouterProgramme("TANT_QUE expression", new Ast<Booleen>(0){
+            @Override
+            public Booleen run(List<Object> p) {
+                if (((Booleen) p.get(1)).eval()){
+                    Executeur.nouveauBloc("tantque");
+                }
+                return (Booleen) p.get(1);
+            }
+            @Override
+            public String prochaineCoord(String coord){
+                return Executeur.nouveauBloc("tantque");
+            }
+        });
+
+
+        ajouterProgramme("{fin_bloucle}", new Ast<Object>(0){
+            @Override
+            public Object run(List<Object> p) {
+                Executeur.finBloc();
+                Executeur.coordMoinsUn();
+                return new Nul();
+            }
+            @Override
+            public String prochaineCoord(String coord) {
                 return Executeur.finBloc();
             }
         });
@@ -124,6 +154,17 @@ public class PscParser extends ParserGenerator {
                     throw new Error("Type de donnee invalide");
                 }
             }
+        });
+
+        ajouterExpression("expression A expression", new Ast<Liste<Entier>>(){
+            @Override
+            public Liste<Entier> run(List<Object> p) {
+                ArrayList<Entier> range = new ArrayList<>();
+                for (int i = ((Entier) p.get(0)).eval(); i < ((Entier) p.get(2)).eval(); ++i){
+                    range.add(new Entier(i));
+                }
+                return new Liste<Entier>(range.toArray(Entier[]::new));
+            };
         });
 
         ajouterExpression("NOM_VARIABLE", new Ast<Object>(0) {
@@ -187,7 +228,7 @@ public class PscParser extends ParserGenerator {
             }
         });
 
-        ajouterExpression("expression {comparaison} expression", new Ast<Booleen>(6){
+        ajouterExpression("expression {comparaison} expression", new Ast<Booleen>(){
             @Override
             public Booleen run(List<Object> p) {
                 String nom = ((Token) p.get(1)).getNom();

@@ -53,11 +53,26 @@
     ASSIGNEMENT     ->      <-
 
 
-    # bloc
+    # bloc si
     SI              ->      \bsi\b
     ALORS           ->      \balors\b
     SINON           ->      \bsinon\b
     FIN_SI          ->      \bfin si\b
+    
+
+
+    # bloc pour
+    POUR            ->      \bpour\b
+    A               ->      \ba\b
+
+    # bloc tant que
+    TANT_QUE        ->      \btant que\b
+
+    fin_bloucle {
+        FIN_POUR        ->      \bfin pour\b
+        FIN_TANT_QUE    ->      \bfin tant que\b
+    }
+
 
 
     type_de_donnees {

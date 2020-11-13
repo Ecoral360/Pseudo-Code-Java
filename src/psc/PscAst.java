@@ -1,5 +1,7 @@
 package psc;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 
 import javax.lang.model.type.NullType;
@@ -150,12 +152,26 @@ public interface PscAst<T> {
     }
 
     class Nul implements PscAst<NullType> {
-        
+
         Nul(){}
 
         @Override
         public NullType eval() {
             return null;
+        }
+    }
+
+
+    class Liste<T> implements PscAst<ArrayList<T>>{
+        private ArrayList<T> valeur;
+
+        Liste(T[] valeurs) {
+            this.valeur = new ArrayList<T>(Arrays.asList(valeurs));
+        }
+
+        @Override
+        public ArrayList<T> eval() {
+            return valeur;
         }
     }
 

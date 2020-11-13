@@ -47,9 +47,12 @@ public class Executeur {
     public static void executer(PscLexer lexer, PscParser parser){
         while (coordDict.containsKey(coord)){
             String line = coordDict.get(coord);
-            List<Token> tokens = lexer.lex(line);
+
+            //System.out.println(coord + " " + line);
+
+            List<Token> tokens = lexer.lex(line.trim());
             parser.parse(tokens);
-            coord = plusUn(coord);
+            Executeur.coordPlusUn();
         }
     }
 
@@ -71,27 +74,35 @@ public class Executeur {
     }
 
     public static String finBloc(){
-        coord = coord.replaceFirst("<.*(?=<)", "");
+        coord = coord.replaceFirst("<\\d+>\\w+", "");
         return coord;
     }
 
     public static void compiler(ArrayList<String> lines, PscLexer lexer, PscParser parser){
         for (String line: lines){
-            String programme = parser.obtenirProgramme(lexer.lex(line));
+            String programme = parser.obtenirProgramme(lexer.lex(line.trim()));
 
             //System.out.println(coord);
             
             coordDict.put(coord, line);
 
             coord = parser.obtenirProgrammeDict().get(programme).prochaineCoord(coord);
-            coord = Executeur.plusUn(coord);
+            Executeur.coordPlusUn();
         }
         reset();
     }
 
-    public static String plusUn(String coord){
+    public static String coordPlusUn(){
         String premierNum = coord.substring(coord.indexOf("<")+1, coord.indexOf(">"));
         int nextNum = Integer.valueOf(premierNum) + 1;
-        return "<" + nextNum + coord.substring(coord.indexOf(">"));
+        coord = "<" + nextNum + coord.substring(coord.indexOf(">"));
+        return coord;
+    }
+
+    public static String coordMoinsUn(){
+        String premierNum = coord.substring(coord.indexOf("<")+1, coord.indexOf(">"));
+        int nextNum = Integer.valueOf(premierNum) - 1;
+        coord = "<" + nextNum + coord.substring(coord.indexOf(">"));
+        return coord;
     }
 }
